@@ -6,11 +6,11 @@ def iterate(space, F):
     for i in range(1, space.shape[0]):
         for j in range(1, space.shape[1] - 1):
             space[i,j] = (1-2*F) * space[i-1,j] + F * space[i-1,j-1] + F * space[i-1,j+1]
-            if (i == 40 and j == 1):
-                print(f'{(1-2*F) * space[i-1,j]} + {F * space[i-1,j-1]} + {F * space[i-1,j+1]}')
-                print(f'{i}, {j}: {space[i,j]}')
-                print(space[i-10:i+1, :])
-                print("============")
+            # if (i == 40 and j == 1):
+            #     print(f'{(1-2*F) * space[i-1,j]} + {F * space[i-1,j-1]} + {F * space[i-1,j+1]}')
+            #     print(f'{i}, {j}: {space[i,j]}')
+            #     print(space[i-10:i+1, :])
+            #     print("============")
     
     print(space)
     print(f"Center temp is {space[space.shape[0] // 2][space.shape[1] // 2]}")
@@ -68,34 +68,21 @@ def plot_temperature(space: np.ndarray):
     plt.tight_layout()
     plt.show()
 
-if __name__ == "__main__":
-    t_range = (0, 1000)
-    t_grid_size = 3
-    x_range = (0, 0.05)
-    x_grid_size = 0.001
 
-    t_grid_count = int((t_range[1] - t_range[0]) / t_grid_size)
-    x_grid_count = int((x_range[1] - x_range[0]) / x_grid_size)
+def plot_times(times, time_step, space, x_grid):
+    """
+    Plots a temperature vs position at times: 
+    
+    :param space: np.ndarray of shape (n, m) containing temperature values.
+    """   
+    fig = plt.figure(figsize=(12, 10))
+    
+    for time in times:
+        plt.plot(x_grid,space[int(time / time_step),:], label = f"t={time}")
 
-    t_grid = np.linspace(t_range[0], t_range[1], t_grid_count + 1)
-    x_grid = np.linspace(x_range[0], x_range[1], x_grid_count + 1)
-
-    k = 0.479 # thermal conductivity [W/mk]
-    p = 1176  # density [kg/m^3]
-    c_p = 2893 # specific heat  [j/Kg*k]
-    alpha = k / p / c_p
-
-    F = t_grid_size / (x_grid_size**2) * alpha
-    print(F)
-    print(1-2*F, " should be bigger than 0")
-
-    space = np.full((t_grid_count, x_grid_count), 275)  # 275 K intial temp
-    space[0,:] = 275
-    space[:,0] = 373.15
-    space[:,-1] = 373.15
-    print(space.shape)
-    print("=============")
-    np.set_printoptions(formatter={'float': lambda x: "{0:0.5f}".format(x)})
-    iterate(space, F)
-    plot_temperature(space)
+    plt.xlabel("x (m)")
+    plt.ylabel("Temperature (K)")
+    plt.title(f"Temperature vs Position at Varied Times")
+    plt.legend(loc="upper left")
+    plt.show()
 
