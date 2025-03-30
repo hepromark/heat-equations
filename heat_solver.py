@@ -5,7 +5,10 @@ from mpl_toolkits.mplot3d import Axes3D
 def iterate(space, F):
     for i in range(1, space.shape[0]):
         for j in range(1, space.shape[1] - 1):
-            space[i,j] = space[i-1](1-2*F) * space[i-1,j] + F * space[i-1,j-1] + F * space[i-1,j+1]
+            space[i,j] = (1-2*F) * space[i-1,j] + F * space[i-1,j-1] + F * space[i-1,j+1]
+            if space[i][int(space.shape[1] / 2)] > 80 + 273.15:
+                print(f"exited at time timestep {i}")
+                return
             if ((i+ 1,j + 1) == space.shape):
                 print(f'{(1-2*F) * space[i-1,j]} + {F * space[i-1,j-1]} + {F * space[i-1,j+1]}')
                 print(f'{i}, {j}: {space[i,j]}')
