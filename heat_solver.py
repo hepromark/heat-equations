@@ -5,12 +5,12 @@ from mpl_toolkits.mplot3d import Axes3D
 def iterate(space, F):
     for i in range(1, space.shape[0]):
         for j in range(1, space.shape[1] - 1):
-            space[i,j] = (1-2*F) * space[i-1,j] + F * space[i-1,j-1] + F * space[i-1,j+1]
-            # if (i == 40 and j == 1):
-            #     print(f'{(1-2*F) * space[i-1,j]} + {F * space[i-1,j-1]} + {F * space[i-1,j+1]}')
-            #     print(f'{i}, {j}: {space[i,j]}')
-            #     print(space[i-10:i+1, :])
-            #     print("============")
+            space[i,j] = space[i-1](1-2*F) * space[i-1,j] + F * space[i-1,j-1] + F * space[i-1,j+1]
+            if ((i+ 1,j + 1) == space.shape):
+                print(f'{(1-2*F) * space[i-1,j]} + {F * space[i-1,j-1]} + {F * space[i-1,j+1]}')
+                print(f'{i}, {j}: {space[i,j]}')
+                print(space[i-10:i+1, :])
+                print("============")
     
     print(space)
     print(f"Center temp is {space[space.shape[0] // 2][space.shape[1] // 2]}")
