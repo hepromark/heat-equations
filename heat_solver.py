@@ -8,7 +8,7 @@ def iterate(space, F):
             space[i,j] = (1-2*F) * space[i-1,j] + F * space[i-1,j-1] + F * space[i-1,j+1]
             if space[i][int(space.shape[1] / 2)] > 80 + 273.15:
                 print(f"Cooked at time timestep {i}")
-                return
+                return i
             if ((i+ 1,j + 1) == space.shape):
                 print(f'{(1-2*F) * space[i-1,j]} + {F * space[i-1,j-1]} + {F * space[i-1,j+1]}')
                 print(f'{i}, {j}: {space[i,j]}')
@@ -17,6 +17,9 @@ def iterate(space, F):
     
     print(space)
     print(f"Center temp is {space[space.shape[0] // 2][space.shape[1] // 2]}")
+    print(f"Not fully cooked")
+
+    return -1
 
 def plot_temperature(space: np.ndarray):
     """

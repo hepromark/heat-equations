@@ -6,9 +6,9 @@ from heat_solver import iterate, plot_temperature
 
 if __name__ == "__main__":
     t_range = (0, 10000)
-    t_grid_size = 1
+    t_grid_size = 10
     x_range = (0, 0.048)
-    x_grid_size = 0.001
+    x_grid_size = 0.01
 
     t_grid_count = int((t_range[1] - t_range[0]) / t_grid_size) + 1
     x_grid_count = int((x_range[1] - x_range[0]) / x_grid_size) + 1
@@ -26,7 +26,7 @@ if __name__ == "__main__":
     if abs(F) > .5:
         raise Exception(f"F is {F}, should be bigger than 0.5")
 
-    space = np.full((t_grid_count, x_grid_count), 275, dtype=np.float128)  # 275 K intial temp
+    space = np.full((t_grid_count, x_grid_count), 275, dtype=np.float64)  # 275 K intial temp
     space[0,:] = 275
     space[:,0] = 373.15
     space[:,-1] = 373.15
@@ -34,5 +34,7 @@ if __name__ == "__main__":
     print(space.shape)
     print("=============")
     np.set_printoptions(formatter={'float': lambda x: "{0:0.5f}".format(x)})
-    iterate(space, F)
+    cooked_t_idx = iterate(space, F)
+
+    space = space[:cooked_t_idx, :]
     plot_temperature(space)
