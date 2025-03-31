@@ -8,7 +8,7 @@ if __name__ == "__main__":
     t_range = (0, 10000)
     t_grid_size = 10
     x_range = (0, 0.048)
-    x_grid_size = 0.01
+    x_grid_size = 0.001
 
     t_grid_count = int((t_range[1] - t_range[0]) / t_grid_size) + 1
     x_grid_count = int((x_range[1] - x_range[0]) / x_grid_size) + 1
@@ -24,7 +24,7 @@ if __name__ == "__main__":
     F = t_grid_size / (x_grid_size**2) * alpha
     print(F)
     if abs(F) > .5:
-        raise Exception(f"F is {F}, should be bigger than 0.5")
+        raise Exception(f"F is {F}, should be smaller than 0.5")
 
     space = np.full((t_grid_count, x_grid_count), 275, dtype=np.float64)  # 275 K intial temp
     space[0,:] = 275
