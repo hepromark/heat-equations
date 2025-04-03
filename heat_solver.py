@@ -2,12 +2,12 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 
-def iterate(space, F):
+def iterate(space, F, timestep_for_print=1):
     for i in range(1, space.shape[0]):
         for j in range(1, space.shape[1] - 1):
             space[i,j] = (1-2*F) * space[i-1,j] + F * space[i-1,j-1] + F * space[i-1,j+1]
             if space[i][int(space.shape[1] / 2)] > 80 + 273.15:
-                print(f"Cooked at time timestep {i}")
+                print(f"Cooked at time(s): {i*timestep_for_print}")
                 return i
             if ((i+ 1,j + 1) == space.shape):
                 print(f'{(1-2*F) * space[i-1,j]} + {F * space[i-1,j-1]} + {F * space[i-1,j+1]}')
@@ -18,6 +18,30 @@ def iterate(space, F):
     print(space)
     print(f"Center temp is {space[space.shape[0] // 2][space.shape[1] // 2]}")
     print(f"Not fully cooked")
+
+    return -1
+
+def iterate_spherical(space, alpha, delta_r, delta_t, timestep_for_print=1):
+    print(f'F is: {alpha / delta_r**2 * delta_t}')
+    for k in range(1, space.shape[0]):  # Index at 0 since we don't touch ICs
+        # Center of egg (r = 0)
+        space[k, 0] = space[k-1, 0] + alpha*delta_t / delta_r**2 * (2*space[k-1, 1] - 2*space[k-1, 0])
+
+        # Remaining space inside egg
+        for i in range(1, space.shape[1] - 1):
+            r_i = delta_r * i
+            space[k, i] = space[k-1, i] + alpha*delta_t * (
+                (space[k-1, i+1] - 2 * space[k-1, i] + space[k-1, i-1]) / delta_r**2
+                + 2 / r_i * (space[k-1, i+1] - space[k-1, i]) / delta_r
+            )
+
+            print(2 / r_i * (space[k-1, i+1] - space[k-1, i]) / delta_r)
+        
+        print(space[k])
+
+    # print(space)
+    # print(f"Center temp is {space[-1][0]}")
+    # print(f"Not fully cooked")
 
     return -1
 
