@@ -1,9 +1,8 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from egg_equation import main 
+from egg_equation import get_sphere_radius_of_egg 
 
 # Parameters
-r = main()  # mm radius of egg
 t = 800  # s total simulation time
 r_points = 100
 dt = 0.1  # s
@@ -11,10 +10,18 @@ k = 0.3370  # thermal conductivity W/mK
 p = 1036  # density [kg/m^3]
 c_p = 2093  # specific heat [j/Kg*K]
 alpha = k / p / c_p
-print(r)
 
 t_water = 100  # °C
 t_init = 2  # °C
+
+# Egg dimens (cm)
+quail_egg_dimens = [3.5, 2.7]
+chicken_egg_dimens = [6.7, 4.5]
+ostrich_egg_dimens = [15, 13]
+
+rad_quail = get_sphere_radius_of_egg(quail_egg_dimens)
+rad_chicken = get_sphere_radius_of_egg(chicken_egg_dimens)
+rad_ostrich = get_sphere_radius_of_egg(ostrich_egg_dimens)
 
 #Egg Function Temperature
 
@@ -61,7 +68,7 @@ def egg_temperature(r, t, r_points, dt, alpha, t_water, t_init):
 
 
 # Run simulation
-temp, end_index = egg_temperature(r, t, r_points, dt, alpha, t_water, t_init)
+temp, end_index = egg_temperature(rad_chicken, t, r_points, dt, alpha, t_water, t_init)
 
 # Display maximum temperature
 print(np.max(temp[:, -1]))
