@@ -96,7 +96,7 @@ final_time_chick = (end_index_chick) if end_index_chick > 0 else t_chick
 
 # Temperature profile at last time step
 plt.subplot(1, 2, 2)
-radial_positions = np.linspace(0, r, r_points)
+radial_positions = np.linspace(0, rad_chicken, r_points)
 plt.plot(radial_positions, temp_chick[-1, :], 'b-', linewidth=2)
 plt.xlabel('Radial Position (mm)')
 plt.ylabel('Temperature (°C)')
