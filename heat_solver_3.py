@@ -3,9 +3,9 @@ import matplotlib.pyplot as plt
 from egg_equation import main 
 
 # Parameters
-r = 14  # mm radius of egg
+r = main()  # mm radius of egg
 t = 800  # s total simulation time
-r_points = 100
+r_points = 10
 dt = 0.1  # s
 k = 0.3370  # thermal conductivity W/mK
 p = 1036  # density [kg/m^3]
@@ -19,51 +19,50 @@ t_init = 2  # °C
 #Egg Function Temperature
 
 
-def egg_temperature(r, t, r_points, dt, alpha, t_water, t_init):
-    r = r / 1000
+def spherical_heat_solver(r, t, r_points, dt, alpha, t_water, t_init):
+    r = r / 100
     dr = r / r_points
     t_points = int(t / dt)
 
-    print (r)
     
-    temp = np.zeros((r_points, t_points))
+    temp = np.zeros((t_points, r_points))
     
-    temp[-1, :] = t_water  # Python uses -1 for last index
-    temp[:, 0] = t_init
+    # Set boundary conditions
+    temp[:, -1] = t_water  # Python uses -1 for last index
+    temp[0,:] = t_init
     
+    # Calculate Fourier number for stability check 
+    F = alpha * dt / (dr**2)
+    if F > 0.5:
+        raise ValueError("Stability condition violated: F > 0.5")
+    
+
     done_counter = 0
     end_index = 0
+
+    # Main simulation loop
     
-    for k in range(t_points - 1):
-        temp[0, k+1] = temp[0, k] + alpha * dt * ((2 * temp[1, k] - 2 * temp[0, k]) / (dr**2))
+    for k in range(1, t_points): # Temp steps
+        temp[k, 0] = temp[k-1, 0] + alpha * dt / (dr**2) * (2 * temp[k-1, 1] - 2* temp [k-1, 0])
         
-        for i in range(1, r_points - 1):
-            temp[i, k+1] = temp[i, k] + alpha * dt * (
-                (temp[i+1, k] - 2 * temp[i, k] + temp[i-1, k]) / (dr**2) + 
-                (2 / (i * dr)) * ((temp[i+1, k] - temp[i, k]) / dr)
+        # Interior Points
+        for i in range(1, r_points - 1): # Radial positions
+            r_i = i*dr # radial position
+            temp[k, i] = temp[k-1, i] + alpha * dt * (
+                (temp[k-1, i+1] - 2 * temp[k-1, i] + temp[k-1, i-1]) / (dr**2) + 
+                (2 / (r_i)) * ((temp[k-1, i+1] - temp[k-1, i]) / dr)
             )
-        
-        
-
-        temp[-1, k+1] = t_water
-        
-        
-
+   
         # 80°C Check
-        if np.all(temp[:, k+1] >= 80):
-            done_counter += 1
-        else:
-            done_counter = 0
-        
-        if done_counter >= 100:
-            end_index = k
-            break
+        if temp[k,0] >= 80:
+            print(f"Cooked at time(s): {k*dt:.1f}")
+            return temp[:k+1, :], k*dt
     
-    return temp, end_index
+    return temp, t
 
 
 # Run simulation
-temp, end_index = egg_temperature(r, t, r_points, dt, alpha, t_water, t_init)
+temp, cook_time = spherical_heat_solver(r, t, r_points, dt, alpha, t_water, t_init)
 
 # Display maximum temperature
 print(np.max(temp[:, -1]))
@@ -73,15 +72,29 @@ temp_center = temp[0, :]
 
 time = np.linspace(0, t, len(temp_center))
 
-final_time = (end_index) * dt if end_index > 0 else t
 
-print(f'The egg is fully cooked at t = {final_time:.1f} seconds')
 
-# Plot
-plt.figure(figsize=(10, 6))
-plt.plot(time, temp_center, linewidth=2)
-plt.xlabel('Time [s]')
-plt.ylabel('Center Temperature [°C]')
-plt.title('Temperature at the Center of the Egg vs Time')
+
+
+# Temperature at center over time
+plt.subplot(1, 2, 1)
+plt.plot(np.arange(temp.shape[0]) * dt, temp[:, 0], 'r-', linewidth=2)
+plt.xlabel('Time (s)')
+plt.ylabel('Temperature (°C)')
+plt.title('Center Temperature')
 plt.grid(True)
+
+# Temperature profile at last time step
+plt.subplot(1, 2, 2)
+radial_positions = np.linspace(0, r, r_points)
+plt.plot(radial_positions, temp[-1, :], 'b-', linewidth=2)
+plt.xlabel('Radial Position (mm)')
+plt.ylabel('Temperature (°C)')
+plt.title('Final Temperature Profile')
+plt.grid(True)
+
+plt.tight_layout()
 plt.show()
+
+print(f"Final center temperature: {temp[-1, 0]:.2f}°C")
+print(f"Time to reach 80°C at center: {cook_time if cook_time else 'Not reached'} seconds")
