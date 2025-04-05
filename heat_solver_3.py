@@ -26,7 +26,6 @@ rad_quail = get_sphere_radius_of_egg(quail_egg_dimens)
 rad_chicken = get_sphere_radius_of_egg(chicken_egg_dimens)
 rad_ostrich = get_sphere_radius_of_egg(ostrich_egg_dimens)
 
-r = rad_quail
 #Egg Function Temperature
 
 
@@ -71,7 +70,6 @@ def spherical_heat_solver(r, t, r_points, dt, alpha, t_water, t_init):
     
     return temp, t
 # Run simulation
-
 # Display maximum temperature
 temp_chick, end_index_chick = spherical_heat_solver(rad_chicken, t_chick, r_points, dt, alpha, t_water, t_init)
 
