@@ -1,0 +1,89 @@
+import numpy as np
+import matplotlib.pyplot as plt
+from egg_equation import main 
+
+# Parameters for 1 D (no shell)
+r = main()  # mm radius of egg
+t = 800  # s total simulation time
+r_points = 10
+dt = 0.1  # s
+k = 0.504  # thermal conductivity W/mK
+p = 1036  # density [kg/m^3]
+c_p = 3290.3  # specific heat [j/Kg*K]
+alpha = k / p / c_p
+
+
+t_water = 100  # °C
+t_init = 2  # °C
+
+#Egg Function Temperature
+
+
+def spherical_heat_solver(r, t, r_points, dt, alpha, t_water, t_init):
+    r = r / 100
+    dr = r / r_points
+    t_points = int(t / dt)
+
+    
+    temp = np.zeros((t_points, r_points))
+    
+    # Set boundary conditions
+    temp[:, -1] = t_water  # Python uses -1 for last index
+    temp[0,:] = t_init
+    
+    # Calculate Fourier number for stability check 
+    F = alpha * dt / (dr**2)
+    if F > 0.5:
+        raise ValueError("Stability condition violated: F > 0.5")
+    
+
+    done_counter = 0
+    end_index = 0
+
+    # Main simulation loop
+    
+    for k in range(1, t_points): # Temp steps
+        temp[k, 0] = temp[k-1, 0] + alpha * dt / (dr**2) * (2 * temp[k-1, 1] - 2* temp [k-1, 0])
+        
+        # Interior Points
+        for i in range(1, r_points - 1): # Radial positions
+            r_i = i*dr # radial position
+            temp[k, i] = temp[k-1, i] + alpha * dt * (
+                (temp[k-1, i+1] - 2 * temp[k-1, i] + temp[k-1, i-1]) / (dr**2) + 
+                (2 / (r_i)) * ((temp[k-1, i+1] - temp[k-1, i]) / dr)
+            )
+   
+        # 80°C Check
+        if temp[k,0] >= 80:
+            print(f"Cooked at time(s): {k*dt:.1f}")
+            return temp[:k+1, :], k*dt
+    
+    return temp, t
+
+
+# Run simulation
+temp, cook_time = spherical_heat_solver(r, t, r_points, dt, alpha, t_water, t_init)
+
+# Display maximum temperature
+print(np.max(temp[:, -1]))
+
+# Extract temperature at the center (r = 0)
+temp_center = temp[0, :]
+
+time = np.linspace(0, t, len(temp_center))
+
+
+# Temperature at center over time
+plt.subplot(1, 2, 1)
+plt.plot(np.arange(temp.shape[0]) * dt, temp[:, 0], 'r-', linewidth=2)
+plt.xlabel('Time (s)')
+plt.ylabel('Temperature (°C)')
+plt.title('Center Temperature for Poached Egg (No shell)')
+plt.grid(True)
+
+
+plt.tight_layout()
+plt.show()
+
+print(f"Final center temperature: {temp[-1, 0]:.2f}°C")
+print(f"Time to reach 80°C at center: {cook_time if cook_time else 'Not reached'} seconds")
