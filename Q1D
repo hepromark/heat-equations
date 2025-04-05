@@ -1,9 +1,11 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from egg_equation import main 
+from egg_equation import get_sphere_radius_of_egg
 
 # Parameters for 1 D (no shell)
-r = main()  # mm radius of egg
+chicken_egg_dimens = [6.7, 4.5]
+rad_chicken = get_sphere_radius_of_egg(chicken_egg_dimens)
 t = 800  # s total simulation time
 r_points = 10
 dt = 0.1  # s
@@ -52,17 +54,16 @@ def spherical_heat_solver(r, t, r_points, dt, alpha, t_water, t_init):
                 (temp[k-1, i+1] - 2 * temp[k-1, i] + temp[k-1, i-1]) / (dr**2) + 
                 (2 / (r_i)) * ((temp[k-1, i+1] - temp[k-1, i]) / dr)
             )
-   
         # 80°C Check
+
         if temp[k,0] >= 80:
-            print(f"Cooked at time(s): {k*dt:.1f}")
+            print(f'The chicken egg is fully cooked at t = {k/10:.1f} seconds or or t = {k/600:.1f} minutes')
             return temp[:k+1, :], k*dt
     
     return temp, t
 
-
 # Run simulation
-temp, cook_time = spherical_heat_solver(r, t, r_points, dt, alpha, t_water, t_init)
+temp, cook_time = spherical_heat_solver(rad_chicken, t, r_points, dt, alpha, t_water, t_init)
 
 # Display maximum temperature
 print(np.max(temp[:, -1]))
@@ -80,6 +81,7 @@ plt.xlabel('Time (s)')
 plt.ylabel('Temperature (°C)')
 plt.title('Center Temperature for Poached Egg (No shell)')
 plt.grid(True)
+
 
 
 plt.tight_layout()
