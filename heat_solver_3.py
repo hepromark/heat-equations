@@ -1,10 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
-from egg_equation import main 
+from egg_equation import get_sphere_radius_of_egg
 
 # Parameters for chicken egg
-r = main()  # mm radius of egg
-t = 800  # s total simulation time
+t = 800  # s total simulation time  
 r_points = 10
 dt = 0.1  # s
 k = 0.499  # thermal conductivity W/mK
@@ -12,10 +11,19 @@ p = 1175.04  # density [kg/m^3]
 c_p = 3026.05 # specific heat [j/Kg*K]
 alpha = k / p / c_p
 
-
 t_water = 100  # °C
 t_init = 2  # °C
 
+# Egg dimens (cm)
+quail_egg_dimens = [3.5, 2.7]
+chicken_egg_dimens = [6.7, 4.5]
+ostrich_egg_dimens = [15, 13]
+
+rad_quail = get_sphere_radius_of_egg(quail_egg_dimens)
+rad_chicken = get_sphere_radius_of_egg(chicken_egg_dimens)
+rad_ostrich = get_sphere_radius_of_egg(ostrich_egg_dimens)
+
+r = rad_quail
 #Egg Function Temperature
 
 

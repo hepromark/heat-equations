@@ -60,23 +60,22 @@ class eggSystem:
             raise ValueError("Compute volume first using egg_volume().")
         return np.cbrt(self.volume * 6 / np.pi) / 2
 
+
+def get_sphere_radius_of_egg(dimens):
+    """
+    Returns the equivalent radius of a spherical egg based on non spherical dimens
+    expects dimens as an array of form [length (long axis), width]
+    """
+    egg = eggSystem(major_length=dimens[0], minor_length=dimens[1])
+    egg.solve_egg_system()
+    egg.egg_volume()
+    rad = egg.find_spherical_radius()
+    return rad
+
 def main():
     quail_lengths = [3.5, 2.7]
-    
-    egg = eggSystem(major_length=quail_lengths[0], minor_length=quail_lengths[1])
-    
-    x_sol, b_sol = egg.solve_egg_system()
-    print(f"Solution: x = {x_sol}, b = {b_sol}")
-    
-    volume = egg.egg_volume()
-    print(f"Volume: {volume}")
-
-    radius = egg.find_spherical_radius()
+    radius = get_sphere_radius_of_egg(quail_lengths)
     print(f"Equivalent sphere radius: {radius}")
-
-    return radius
 
 if __name__ == "__main__":
     main()
-
-
