@@ -1,8 +1,9 @@
 import numpy as np
 import matplotlib.pyplot as plt
+from egg_equation import main 
 
 # Parameters
-r = 22  # mm radius of egg
+r = main()  # mm radius of egg
 t = 800  # s total simulation time
 r_points = 100
 dt = 0.1  # s
@@ -10,15 +11,16 @@ k = 0.3370  # thermal conductivity W/mK
 p = 1036  # density [kg/m^3]
 c_p = 2093  # specific heat [j/Kg*K]
 alpha = k / p / c_p
+print(r)
 
 t_water = 100  # °C
 t_init = 2  # °C
 
 #Egg Function Temperature
 
+
 def egg_temperature(r, t, r_points, dt, alpha, t_water, t_init):
-    r = r / 1000  # converts to meters
-    
+    r = r * 100
     dr = r / r_points
     t_points = int(t / dt)
     
@@ -39,8 +41,12 @@ def egg_temperature(r, t, r_points, dt, alpha, t_water, t_init):
                 (2 / (i * dr)) * ((temp[i+1, k] - temp[i, k]) / dr)
             )
         
+        
+
         temp[-1, k+1] = t_water
         
+        
+
         # 80°C Check
         if np.all(temp[:, k+1] >= 80):
             done_counter += 1

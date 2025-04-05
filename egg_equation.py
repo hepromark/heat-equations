@@ -74,6 +74,8 @@ def main():
     radius = egg.find_spherical_radius()
     print(f"Equivalent sphere radius: {radius}")
 
+    return radius
+
 if __name__ == "__main__":
     main()
 
