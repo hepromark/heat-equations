@@ -51,6 +51,8 @@ def spherical_heat_solver(r, t, r_points, dt, alpha, t_water, t_init):
     end_index = 0
 
     # Main simulation loop
+    time_for_cook = int(np.ceil(10 / dt))  # req number of iterations at threshold temperature
+    temp_for_cook = 80
     
     for k in range(1, t_points): # Temp steps
         temp[k, 0] = temp[k-1, 0] + alpha * dt / (dr**2) * (2 * temp[k-1, 1] - 2* temp [k-1, 0])
@@ -62,13 +64,14 @@ def spherical_heat_solver(r, t, r_points, dt, alpha, t_water, t_init):
                 (temp[k-1, i+1] - 2 * temp[k-1, i] + temp[k-1, i-1]) / (dr**2) + 
                 (2 / (r_i)) * ((temp[k-1, i+1] - temp[k-1, i]) / dr)
             )
-        # 80°C Check
 
-        if temp[k,0] >= 80:
+        # Cooking check
+        if (k - time_for_cook >= 0) and (temp[k - time_for_cook,0] >= temp_for_cook):
             print(f"Cooked at time(s): {k*dt:.1f}")
             return temp[:k+1, :], k*dt
     
     return temp, t
+
 # Run simulation
 # Display maximum temperature
 temp_chick, end_index_chick = spherical_heat_solver(rad_chicken, t_chick, r_points, dt, alpha, t_water, t_init)
