@@ -98,7 +98,7 @@ def plot_temperature(space: np.ndarray):
 
 def analytical_solver(times: List[float], order: int = 100, num_points: int = 100):
     def C_n(n : int):
-        if n % 2:
+        if not n % 2:
             return -4 / n / np.pi
         else:
             return 4 / n / np.pi + 4 / np.pi / (n**2 - 1)
@@ -110,27 +110,29 @@ def analytical_solver(times: List[float], order: int = 100, num_points: int = 10
         values = np.zeros((x.shape[0], t.shape[0]))
 
         values =  2 * np.tile(x, (t.shape[0], 1))
-        print(values.shape)
+
         for n in range(2, order + 1):
             coeff = C_n(n)
             sin_term = np.sin(np.pi * n * x)  # shape: (len(x),)
             decay = np.exp(-2 * (np.pi * n)**2 * t[:, None])  # shape: (len(t), 1)
             values += coeff * sin_term[None, :] * decay  # broadcasted multiplication
-
+        print(values)
         return values  # shape: (len(t), len(x))
 
     times = np.array(times)
-    x_points = np.linspace(0, 1, 100)
+    x_points = np.linspace(0, 1, num_points)
 
     values = f_x(x_points, times, order)
+
+    plt.figure(figsize=(10, 6))
 
     for i, t in enumerate(times):
         plt.plot(x_points, values[i, :], label=f"t = {t}")
 
     plt.xlabel("x")
     plt.ylabel("u(x,t)")
-    plt.title("Analytical Solution of the Heat Equation")
-    plt.legend()
+    plt.title(f"Analytical Solution of the Heat Equation(N={order})")
+    plt.legend(loc="upper left")
     plt.grid(True)
     plt.savefig("plots/2a_analytical.png", dpi=300)
     plt.show()
@@ -141,11 +143,14 @@ def plot_times(times, time_step, space, x_grid):
     
     :param space: np.ndarray of shape (n, m) containing temperature values.
     """     
+    plt.figure(figsize=(10, 6))
+
     for time in times:
         plt.plot(x_grid,space[int(time / time_step),:], label = f"t={time} numerical")
 
     plt.xlabel("x (m)")
     plt.ylabel("Temperature (K)")
+    plt.grid(True)
     plt.title(f"Temperature vs Position at Varied Times")
     plt.legend(loc="upper left")
     plt.savefig("plots/2a_numerical.png", dpi=300)
