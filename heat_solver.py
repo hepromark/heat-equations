@@ -89,9 +89,9 @@ def plot_temperature(space: np.ndarray):
 def analytical_solver(times: List[float], order: int = 100, num_points: int = 100):
     def C_n(n : int):
         if n % 2 == 0:
-            return -4 / n / np.pi
+            return 4 / n / np.pi
         else:
-            return 4 / n / np.pi + 4 * n / np.pi / (n**2 - 1)
+            return - 4 / n / np.pi + 4 * n / np.pi / (n**2 - 1)
 
     def f_x(x : np.array, t : np.array, order : int) -> float:
         if order < 2:
