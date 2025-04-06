@@ -12,12 +12,6 @@ def iterate(space, F, timestep_for_print=1):
                 print(f'{i}, {j}: {space[i,j]}')
                 print(space[i-10:i+1, :])
                 print("============")
-    
-    print(space)
-    print(f"Center temp is {space[space.shape[0] // 2][space.shape[1] // 2]}")
-    print(f"Not fully cooked")
-
-    return -1
 
 def iterate_spherical(space, alpha, delta_r, delta_t, timestep_for_print=1):
     print(f'F is: {alpha / delta_r**2 * delta_t}')
@@ -36,10 +30,6 @@ def iterate_spherical(space, alpha, delta_r, delta_t, timestep_for_print=1):
             print(2 / r_i * (space[k-1, i+1] - space[k-1, i]) / delta_r)
         
         print(space[k])
-
-    # print(space)
-    # print(f"Center temp is {space[-1][0]}")
-    # print(f"Not fully cooked")
 
     return -1
 
@@ -98,10 +88,10 @@ def plot_temperature(space: np.ndarray):
 
 def analytical_solver(times: List[float], order: int = 100, num_points: int = 100):
     def C_n(n : int):
-        if not n % 2:
+        if n % 2 == 0:
             return -4 / n / np.pi
         else:
-            return 4 / n / np.pi + 4 / np.pi / (n**2 - 1)
+            return 4 / n / np.pi + 4 * n / np.pi / (n**2 - 1)
 
     def f_x(x : np.array, t : np.array, order : int) -> float:
         if order < 2:
@@ -116,7 +106,6 @@ def analytical_solver(times: List[float], order: int = 100, num_points: int = 10
             sin_term = np.sin(np.pi * n * x)  # shape: (len(x),)
             decay = np.exp(-2 * (np.pi * n)**2 * t[:, None])  # shape: (len(t), 1)
             values += coeff * sin_term[None, :] * decay  # broadcasted multiplication
-        print(values)
         return values  # shape: (len(t), len(x))
 
     times = np.array(times)
@@ -146,7 +135,7 @@ def plot_times(times, time_step, space, x_grid):
     plt.figure(figsize=(10, 6))
 
     for time in times:
-        plt.plot(x_grid,space[int(time / time_step),:], label = f"t={time} numerical")
+        plt.plot(x_grid,space[int(time / time_step),:], label = f"t={time}")
 
     plt.xlabel("x (m)")
     plt.ylabel("Temperature (K)")

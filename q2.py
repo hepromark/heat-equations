@@ -35,8 +35,8 @@ if __name__ == "__main__":
     times = [0.001,0.01,0.1,10]
     
     # Iterative approach
-    iterate(space, F)
-    plot_times(times, t_grid_size, space, x_grid)
+    # iterate(space, F)
+    # plot_times(times, t_grid_size, space, x_grid)
     
     # Analytical approach
-    analytical_solver(times, order=100, num_points=10)
+    analytical_solver(times, order=100, num_points=100)
