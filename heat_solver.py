@@ -1,25 +1,17 @@
 import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
+from typing import List
 
 def iterate(space, F, timestep_for_print=1):
     for i in range(1, space.shape[0]):
         for j in range(1, space.shape[1] - 1):
             space[i,j] = (1-2*F) * space[i-1,j] + F * space[i-1,j-1] + F * space[i-1,j+1]
-            if space[i][int(space.shape[1] / 2)] > 80 + 273.15:
-                print(f"Cooked at time(s): {i*timestep_for_print}")
-                return i
             if ((i+ 1,j + 1) == space.shape):
                 print(f'{(1-2*F) * space[i-1,j]} + {F * space[i-1,j-1]} + {F * space[i-1,j+1]}')
                 print(f'{i}, {j}: {space[i,j]}')
                 print(space[i-10:i+1, :])
                 print("============")
-    
-    print(space)
-    print(f"Center temp is {space[space.shape[0] // 2][space.shape[1] // 2]}")
-    print(f"Not fully cooked")
-
-    return -1
 
 def iterate_spherical(space, alpha, delta_r, delta_t, timestep_for_print=1):
     print(f'F is: {alpha / delta_r**2 * delta_t}')
@@ -38,10 +30,6 @@ def iterate_spherical(space, alpha, delta_r, delta_t, timestep_for_print=1):
             print(2 / r_i * (space[k-1, i+1] - space[k-1, i]) / delta_r)
         
         print(space[k])
-
-    # print(space)
-    # print(f"Center temp is {space[-1][0]}")
-    # print(f"Not fully cooked")
 
     return -1
 
@@ -98,21 +86,60 @@ def plot_temperature(space: np.ndarray):
     plt.tight_layout()
     plt.show()
 
+def analytical_solver(times: List[float], order: int = 100, num_points: int = 100):
+    def C_n(n : int):
+        if n == 1:
+            return -4 / np.pi
+        else:
+            return (1 - np.cos((n+1)*np.pi))/ (n+1) / np.pi - (1-np.cos((1-n)*np.pi)) / (n-1)/np.pi + 4*np.cos(np.pi*n) / n / np.pi
+
+    def f_x(x : np.array, t : np.array, order : int) -> float:
+        if order < 1:
+            raise Exception("Order must be at least 2")
+        # Shape: (len(t), len(x))
+        values =  2 * np.tile(x, (t.shape[0], 1))
+
+        for n in range(1, order + 1):
+            coeff = C_n(n)
+            sin_term = np.sin(np.pi * n * x)  # shape: (len(x),)
+            decay = np.exp(-2 * (np.pi * n)**2 * t[:, None])  # shape: (len(t), 1)
+            values += coeff * sin_term[None, :] * decay  # broadcasted multiplication
+        return values  # shape: (len(t), len(x))
+
+    times = np.array(times)
+    x_points = np.linspace(0, 1, num_points)
+
+    values = f_x(x_points, times, order)
+
+    plt.figure(figsize=(10, 6))
+
+    for i, t in enumerate(times):
+        plt.plot(x_points, values[i, :], label=f"t = {t}")
+
+    plt.xlabel("x")
+    plt.ylabel("u(x,t)")
+    plt.title(f"Analytical Solution of the Heat Equation(N={order})")
+    plt.legend(loc="upper left")
+    plt.grid(True)
+    plt.savefig("plots/2a_analytical.png", dpi=300)
+    plt.show()
 
 def plot_times(times, time_step, space, x_grid):
     """
     Plots a temperature vs position at times: 
     
     :param space: np.ndarray of shape (n, m) containing temperature values.
-    """   
-    fig = plt.figure(figsize=(12, 10))
-    
+    """     
+    plt.figure(figsize=(10, 6))
+
     for time in times:
         plt.plot(x_grid,space[int(time / time_step),:], label = f"t={time}")
 
     plt.xlabel("x (m)")
     plt.ylabel("Temperature (K)")
+    plt.grid(True)
     plt.title(f"Temperature vs Position at Varied Times")
     plt.legend(loc="upper left")
+    plt.savefig("plots/2a_numerical.png", dpi=300)
     plt.show()
 

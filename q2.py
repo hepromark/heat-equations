@@ -1,7 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-from heat_solver import iterate, plot_times
+from heat_solver import iterate, plot_times, analytical_solver
 
 
 if __name__ == "__main__":
@@ -32,7 +32,11 @@ if __name__ == "__main__":
     print(space.shape)
     print("=============")
     np.set_printoptions(formatter={'float': lambda x: "{0:0.5f}".format(x)})
-    iterate(space, F)
-    plot_times([0.001,0.01,0.1,10], t_grid_size, space, x_grid)
-
-
+    times = [0.001,0.01,0.1,10]
+    
+    # Iterative approach
+    # iterate(space, F)
+    # plot_times(times, t_grid_size, space, x_grid)
+    
+    # Analytical approach
+    analytical_solver(times, order=100, num_points=100)
