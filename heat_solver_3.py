@@ -76,7 +76,7 @@ def spherical_heat_solver(r, t, r_points, dt, alpha, t_water, t_init):
 temp_chick, end_index_chick = spherical_heat_solver(rad_chicken, t_chick, r_points, dt, alpha, t_water, t_init)
 
 # Extract temperature at the center (r = 0)
-temp_center_chick = temp_chick[0, :]
+temp_center_chick = temp_chick[:, 0]
 
 time = np.linspace(0, t_chick, len(temp_center_chick))
 
@@ -116,7 +116,7 @@ print(f'The chicken egg is fully cooked at t = {final_time_chick:.1f} seconds or
 temp_quail, end_index_quail = spherical_heat_solver(rad_quail, t_quail, r_points, dt, alpha, t_water, t_init)
 
 # Extract temperature at the center (r = 0)
-temp_center_quail = temp_quail[0, :]
+temp_center_quail = temp_quail[:, 0]
 
 time = np.linspace(0, t_quail, len(temp_center_quail))
 
@@ -161,7 +161,7 @@ plt.show()
 temp_os, end_index_os = spherical_heat_solver(rad_ostrich, t_os, r_points, dt, alpha, t_water, t_init)
 
 # Extract temperature at the center (r = 0)
-temp_center_os = temp_os[0, :]
+temp_center_os = temp_os[:, 0]
 
 time = np.linspace(0, t_os, len(temp_center_os))
 
