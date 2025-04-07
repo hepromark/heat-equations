@@ -86,26 +86,32 @@ def plot_temperature(space: np.ndarray):
     plt.tight_layout()
     plt.show()
 
-def analytical_solver(times: List[float], order: int = 100, num_points: int = 100):
+def analytical_solver(times: List[float], order: int = 100, num_points: int = 100): 
     def C_n(n : int):
-        if n % 2 == 0:
-            return 4 / n / np.pi
-        else:
-            return - 4 / n / np.pi + 4 * n / np.pi / (n**2 - 1)
+    # return 4 * pow(-1,n) / np.pi / n + .5 * n * (1 - pow(-1,n+1)) / np.pi / (n**2 -1) 
+    # return 4 * pow(-1,n) / np.pi / n
+        return 4 / n**2 / np.pi**2
 
-    def f_x(x : np.array, t : np.array, order : int) -> float:
-        if order < 2:
-            raise Exception("Order must be at least 2")
+    def f_x(x : np.array, t : np.array, order : int) -> np.array:
+        if order < 1:
+            raise Exception("Order must be at least 1")
+        
         # Shape: (len(t), len(x))
         values = np.zeros((x.shape[0], t.shape[0]))
-
         values =  2 * np.tile(x, (t.shape[0], 1))
 
-        for n in range(2, order + 1):
+        sum_term = np.zeros((t.shape[0],x.shape[0]))
+
+        for n in range(2, order + 1, 2):
             coeff = C_n(n)
-            sin_term = np.sin(np.pi * n * x)  # shape: (len(x),)
-            decay = np.exp(-2 * (np.pi * n)**2 * t[:, None])  # shape: (len(t), 1)
-            values += coeff * sin_term[None, :] * decay  # broadcasted multiplication
+
+            sino_term = np.cos(x * np.pi * n)
+            sino_term = np.tile(sino_term, (t.shape[0], 1))
+            decay = np.exp(-2 * (np.pi * n)**2 * t[:, None]) 
+            sum_term += decay * sino_term * coeff
+
+        values += sum_term
+
         return values  # shape: (len(t), len(x))
 
     times = np.array(times)

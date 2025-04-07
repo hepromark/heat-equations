@@ -32,11 +32,11 @@ if __name__ == "__main__":
     print(space.shape)
     print("=============")
     np.set_printoptions(formatter={'float': lambda x: "{0:0.5f}".format(x)})
-    times = [0.001,0.01,0.1,10]
+    times = [0, 0.001,0.01,0.1,10]
     
     # Iterative approach
     # iterate(space, F)
     # plot_times(times, t_grid_size, space, x_grid)
     
     # Analytical approach
-    analytical_solver(times, order=100, num_points=100)
+    analytical_solver(times, order=10, num_points=100)
