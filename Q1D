@@ -13,6 +13,7 @@ k = 0.504  # thermal conductivity W/mK
 p = 1036  # density [kg/m^3]
 c_p = 3290.3  # specific heat [j/Kg*K]
 alpha = k / p / c_p
+mass = 0.05  # kg (50g egg)
 
 
 t_water = 100  # °C
@@ -61,6 +62,12 @@ def spherical_heat_solver(r, t, r_points, dt, alpha, t_water, t_init):
             return temp[:k+1, :], k*dt
     
     return temp, t
+
+# Really unnecessary energy solver
+def energy_solver(mass, c_p, t_water, t_init):
+    # Calculate the energy required to heat the egg to the boiling point
+    energy = mass * c_p * (t_water - t_init)  # in Joules
+    return energy
 
 # Run simulation
 temp, cook_time = spherical_heat_solver(rad_chicken, t, r_points, dt, alpha, t_water, t_init)
