@@ -32,7 +32,7 @@ This repository contains implementations and examples related to solving heat eq
         ![Numerical Solution](./plots/2a_numerical.png)
 
     2. Analytical Solution:
-        ![Analytical Solution](./plots/2a_analytical.png)
+        ![Analytical Solution](./plots/2b_analytical.png)
 
 ## Getting Started
 Try it out!
