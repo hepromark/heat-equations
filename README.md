@@ -29,10 +29,10 @@ This repository contains implementations and examples related to solving heat eq
     Additionally, the numerical and analytical solutions are compared using the plots below, which demonstrate their similarity. Both plots are located in the `/plots` folder:
 
     1. Numerical Solution:
-        ![Numerical Solution](./plots/numerical_solution.png)
+        ![Numerical Solution](./plots/2a_numerical.png)
 
     2. Analytical Solution:
-        ![Analytical Solution](./plots/analytical_solution.png)
+        ![Analytical Solution](./plots/2a_analytical.png)
 
 ## Getting Started
 Try it out!
