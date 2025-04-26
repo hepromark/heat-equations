@@ -20,11 +20,11 @@ This repository contains implementations and examples related to solving heat eq
     ![chicken egg](./plots/1_chicken_egg_temperature_profile.png)
 
 2. `q2.py` - Solves heat equation in Cartesian coordinates:
-    ![q2 problem](./images/q2.png)
+    ![q2 problem](./docs/q2.png)
     
     Comparing numerical with the following derived analytical solution:
 
-    ![analytical solution](./images/analytical.png)
+    ![analytical solution](./docs/analytical.png)
 
     Additionally, the numerical and analytical solutions are compared using the plots below, which demonstrate their similarity. Both plots are located in the `/plots` folder:
 
@@ -33,6 +33,8 @@ This repository contains implementations and examples related to solving heat eq
 
     2. Analytical Solution:
         ![Analytical Solution](./plots/2b_analytical.png)
+
+3. The report for the project can be found [here](docs/report.pdf)
 
 ## Getting Started
 Try it out!
